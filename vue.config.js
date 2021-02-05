@@ -2,7 +2,7 @@ const path = require('path')
 module.exports = {
   /* 
     部署生产环境和开发环境下的URL：可对当前环境进行区分
-    部署应用时的基本 URL
+    部署应用时的基本URL
     如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。
     例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置publicPath为/my-app/
    */
@@ -10,18 +10,18 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/public/' : './',
   /* 输出文件目录：在npm run build时，生成文件的目录名称 */
   outputDir: 'dist',
-  /* 放置生成的静态资源(js、css、img、fonts)的(相对于 outputDir 的) 目录 */
+  /* 放置生成的静态资源(js、css、img、fonts)的(相对于outputDir的)目录*/
   assetsDir: 'static',
-  /* 指定生成的 index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径 */
+  /* 指定生成的index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径 */
   indexPath: '/',
   /* 在multi-page模式下构建应用。每个“page”应该有一个对应的JavaScript 入口文件 */
   pages: {
     index: {
       entry: 'src/main.js', // page 的入口 必须选项
       template: 'public/index.html', // 模板文件来源 可选
-      filename: 'index.html', // 在 dist/index.html 的输出  可选
-      title: 'vuedemo', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选
-      chunks: ['chunk-vendors', 'chunk-common', 'index'] // 在这个页面中包含的块，默认情况下会包含, 提取出来的通用 chunk 和 vendor chunk。 可选
+      filename: 'index.html', // 在dist/index.html的输出可选
+      title: 'vuedemo', // 当使用title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选
+      chunks: ['chunk-vendors', 'chunk-common', 'index'] //在这个页面中包含的块，默认情况下会包含, 提取出来的通用chunk和 vendor chunk 可选
     }
     // 当使用只有入口的字符串格式时，
     // 模板会被推导为 `public/subpage.html`
@@ -29,7 +29,7 @@ module.exports = {
     // 输出文件名会被推导为 `subpage.html`。
     // subpage: 'src/subpage/main.js'
   },
-  /* 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度 */
+  /* 是否在构建生产包时生成sourceMap文件，false将提高构建速度 */
   productionSourceMap: false,
   /* 默认情况下，生成的静态资源在它们的文件名中包含了hash以便更好的控制缓存,你可以通过将这个选项设为false来关闭文件名哈希。(false的时候就是让原来的文件名不改变) */
   filenameHashing: false,
@@ -41,7 +41,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV !== 'production',
   // 是否使用包含运行时编译器的Vue构建版本
   runtimeCompiler: false,
-  // babel-loader 默认会跳过 node_modules 依赖。通过这个选项可以显式转译一个依赖。
+  // babel-loader默认会跳过node_modules依赖。通过这个选项可以显式转译一个依赖。
   // Babel 显式转译列表
   transpileDependencies: [
     /* string or regex */
@@ -67,7 +67,7 @@ module.exports = {
     // 当为true时,css文件名可省略 module 默认为 false
     requireModuleExtension: false,
     // 是否将组件中的CSS提取至一个独立的CSS文件中,当作为一个库构建时，你也可以将其设置为false免得用户自己导入CSS
-    // 默认生产环境下是,true,开发环境下是 false
+    // 默认生产环境下是,true,开发环境下是 false  是否使用css分离插件 ExtractTextPlugin
     extract: false,
     // 是否为CSS开启source map,设置为true之后可能会影响构建的性能
     sourceMap: false,
