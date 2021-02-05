@@ -31,12 +31,12 @@ module.exports = {
   },
   /* 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度 */
   productionSourceMap: false,
-  /* 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存，你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变) */
+  /* 默认情况下，生成的静态资源在它们的文件名中包含了hash以便更好的控制缓存,你可以通过将这个选项设为false来关闭文件名哈希。(false的时候就是让原来的文件名不改变) */
   filenameHashing: false,
   /* 
     代码保存时进行eslint检测 
-    是否在保存的时候使用 `eslint-loader` 进行检查。
-    是否在开发环境下通过 eslint-loader 在每次保存时 lint 代码 (在生产构建时禁用 eslint-loader)
+    是否在保存的时候使用`eslint-loader`进行检查。
+    是否在开发环境下通过eslint-loader在每次保存时lint代码(在生产构建时禁用eslint-loader)
   */
   lintOnSave: process.env.NODE_ENV !== 'production',
   // 是否使用包含运行时编译器的Vue构建版本
@@ -66,18 +66,44 @@ module.exports = {
   css: {
     // 当为true时,css文件名可省略 module 默认为 false
     requireModuleExtension: false,
-    // 是否将组件中的CSS提取至一个独立的 CSS 文件中,当作为一个库构建时，你也可以将其设置为 false 免得用户自己导入 CSS
+    // 是否将组件中的CSS提取至一个独立的CSS文件中,当作为一个库构建时，你也可以将其设置为false免得用户自己导入CSS
     // 默认生产环境下是,true,开发环境下是 false
     extract: false,
-    // 是否为CSS开启source map。设置为true之后可能会影响构建的性能
+    // 是否为CSS开启source map,设置为true之后可能会影响构建的性能
     sourceMap: false,
-    //向CSS相关的loader传递选项(支持 css-loader postcss-loader sass-loader less-loader stylus-loader)
-    loaderOptions: {}
+    // 向CSS相关的loader传递选项(支持css-loader postcss-loader sass-loader less-loader stylus-loader)
+    loaderOptions: {
+      // 给sass-loader传递选项
+      sass: {
+        // @/ 是 src/ 的别名
+        // 所以这里假设你有 `src/variables.sass` 这个文件
+        // 注意：在 sass-loader v8 中，这个选项名是 "prependData"
+        // prependData: `@import "~@/variables.sass"`
+      },
+      // 默认情况下`sass`选项会同时对`sass` 和 `scss`语法同时生效
+      // 因为`scss`语法在内部也是由sass-loader处理的
+      // 但是在配置 `prependData` 选项的时候
+      // `scss` 语法会要求语句结尾必须有分号，`sass`则要求必须没有分号
+      // 在这种情况下，我们可以使用`scss`选项，对`scss`语法进行单独配置
+      scss: {
+        // prependData:`@import "~@/variables.scss";`
+      },
+      // 给less-loader传递Less.js相关选项
+      less: {
+        // http://lesscss.org/usage/#less-options-strict-units `Global Variables`
+        // `primary` is global variables fields name
+        globalVars: {
+          primary: '#fff'
+        }
+      }
+    }
   },
-  /* webpack-dev-server 相关配置 */
+  /* webpack-dev-server相关配置 */
+  // 如果你的前端应用和后端API服务器没有运行在同一个主机上，
+  // 你需要在开发环境下将API请求代理到API服务器。这个问题可以通过vue.config.js中的 devServer.proxy 选项来配置。
   devServer: {
-    open: true /* 自动打开浏览器 */,
-    host: '0.0.0.0' /* 设置为0.0.0.0则所有的地址均能访问 */,
+    open: true /*自动打开浏览器*/,
+    host: '0.0.0.0' /*设置为0.0.0.0则所有的地址均能访问 */,
     port: 8066,
     https: false,
     hotOnly: false,
@@ -94,7 +120,7 @@ module.exports = {
   // 传递给 PWA 插件的选项。
   // 查阅 https://github.com/vuejs/vue-cli/tree/dev/packages/@vue/cli-plugin-pwa
   pwa: {},
-  // 在生产环境下为 Babel 和 TypeScript 使用 `thread-loader`
+  // 在生产环境下为Babel和TypeScript 使用`thread-loader`
   // 在多核机器下会默认开启。
   parallel: require('os').cpus().length > 1,
   // 三方插件的选项
