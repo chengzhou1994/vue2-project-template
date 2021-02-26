@@ -1,4 +1,8 @@
+// https://zhuanlan.zhihu.com/p/335684457
 const path = require('path')
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 module.exports = {
   /* 
     部署生产环境和开发环境下的URL：可对当前环境进行区分
@@ -60,8 +64,27 @@ module.exports = {
       }
     }
   },
-  // 对内部的webpack配置（比如修改、增加Loader选项）(链式操作)。
-  chainWebpack: () => {},
+  // 对内部的webpack配置（比如修改、增加Loader选项(链式操作)。
+  // 首先需要对 @/assets/icons文件夹下的svg图标进行自动注册,需要对webpack和svg-sprite-loader进行了相关设置，文件全部打包成svg-sprite。
+  chainWebpack: config => {
+    // 在 svg 规则中排除我们的图标库文件夹目录
+    config.module
+      .rule('svg')
+      .exclude.add(resolve('src/icons'))
+      .end()
+    // 创建 icons 规则，设置文件夹包含我们的图标库文件夹目录
+    config.module
+      .rule('icons')
+      .test(/\.svg$/)
+      .include.add(resolve('src/icons'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+  },
   // CSS 相关选项
   css: {
     // 当为true时,css文件名可省略 module 默认为 false
@@ -109,13 +132,17 @@ module.exports = {
     hotOnly: false,
     /* 使用代理 */
     proxy: {
-      '/api': {
-        /* 目标代理服务器地址 */
-        target: 'http://47.100.47.3/',
-        /* 允许跨域 */
-        changeOrigin: true
+      '/chengzhou': {
+        target: 'http://localhost:4000' /* 目标代理服务器地址 */,
+        changeOrigin: true /* 允许跨域 */,
+        ws: true,
+        https: false,
+        chengzhou: {
+          '^/chengzhou': '/chengzhou'
+        }
       }
     }
+    // before: app => {}
   },
   // 传递给 PWA 插件的选项。
   // 查阅 https://github.com/vuejs/vue-cli/tree/dev/packages/@vue/cli-plugin-pwa
