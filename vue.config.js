@@ -1,5 +1,6 @@
 // https://zhuanlan.zhihu.com/p/335684457
 const path = require('path')
+const IS_PROD = ['production'].includes(process.env.NODE_ENV)
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -11,12 +12,12 @@ module.exports = {
     例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置publicPath为/my-app/
    */
   /* publicPath: process.env.NODE_ENV === 'production' ? './' : '/' */
-  publicPath: process.env.NODE_ENV === 'production' ? '/public/' : './',
-  /* 输出文件目录：在npm run build时，生成文件的目录名称 */
-  outputDir: 'dist',
-  /* 放置生成的静态资源(js、css、img、fonts)的(相对于outputDir的)目录*/
+  publicPath: process.env.NODE_ENV === 'production' ? './' : './',
+  /* 输出文件目录:在npm run build时，生成文件的目录名称 */
+  outputDir: process.env.outputDir,
+  /* 放置生成的静态资源(js、css、img、fonts)的相对于outputDir的目录*/
   assetsDir: 'static',
-  /* 指定生成的index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径 */
+  /* 指定生成的index.html的输出路径 (相对于outputDir)也可以是一个绝对路径 */
   indexPath: '/',
   /* 在multi-page模式下构建应用。每个“page”应该有一个对应的JavaScript 入口文件 */
   pages: {
@@ -24,8 +25,8 @@ module.exports = {
       entry: 'src/main.js', // page 的入口 必须选项
       template: 'public/index.html', // 模板文件来源 可选
       filename: 'index.html', // 在dist/index.html的输出可选
-      title: 'vuedemo', // 当使用title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选
-      chunks: ['chunk-vendors', 'chunk-common', 'index'] //在这个页面中包含的块，默认情况下会包含, 提取出来的通用chunk和 vendor chunk 可选
+      title: 'vuedemo', // 当使用title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选项
+      chunks: ['chunk-vendors', 'chunk-common', 'index'] //在这个页面中包含的块，默认情况下会包含, 提取出来的通用chunk和vendor,chunk  可选项
     }
     // 当使用只有入口的字符串格式时，
     // 模板会被推导为 `public/subpage.html`
@@ -34,22 +35,22 @@ module.exports = {
     // subpage: 'src/subpage/main.js'
   },
   /* 是否在构建生产包时生成sourceMap文件，false将提高构建速度 */
-  productionSourceMap: false,
+  productionSourceMap: !IS_PROD, // 生产环境的source map
   /* 默认情况下，生成的静态资源在它们的文件名中包含了hash以便更好的控制缓存,你可以通过将这个选项设为false来关闭文件名哈希。(false的时候就是让原来的文件名不改变) */
   filenameHashing: false,
+  // 在生成的HTML中配置crossorigin属性<link rel="stylesheet">和<script>标记。告诉脚本而不发送用户凭据
+  crossorigin: undefined,
   /* 
     代码保存时进行eslint检测 
     是否在保存的时候使用`eslint-loader`进行检查。
     是否在开发环境下通过eslint-loader在每次保存时lint代码(在生产构建时禁用eslint-loader)
   */
-  lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: process.env.NODE_ENV !== 'production', //
   // 是否使用包含运行时编译器的Vue构建版本
   runtimeCompiler: false,
   // babel-loader默认会跳过node_modules依赖。通过这个选项可以显式转译一个依赖。
   // Babel 显式转译列表
-  transpileDependencies: [
-    /* string or regex */
-  ],
+  transpileDependencies: [], // string or regex
   // 调整内部的 webpack 配置。
   // 查阅 https://cli.vuejs.org/guide/webpack.html#simple-configuration
   // 如果这个值是一个对象，则会通过 webpack-merge 合并到最终的配置中。
@@ -67,7 +68,7 @@ module.exports = {
   // 对内部的webpack配置（比如修改、增加Loader选项(链式操作)。
   // 首先需要对 @/assets/icons文件夹下的svg图标进行自动注册,需要对webpack和svg-sprite-loader进行了相关设置，文件全部打包成svg-sprite。
   chainWebpack: config => {
-    // 在 svg 规则中排除我们的图标库文件夹目录
+    // 在svg规则中排除我们的图标库文件夹目录
     config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
@@ -100,7 +101,7 @@ module.exports = {
       sass: {
         // @/ 是 src/ 的别名
         // 所以这里假设你有 `src/variables.sass` 这个文件
-        // 注意：在 sass-loader v8 中，这个选项名是 "prependData"
+        // 注意:在sass-loader v8 中，这个选项名是 "prependData"
         // prependData: `@import "~@/variables.sass"`
       },
       // 默认情况下`sass`选项会同时对`sass` 和 `scss`语法同时生效
@@ -115,6 +116,7 @@ module.exports = {
       less: {
         // http://lesscss.org/usage/#less-options-strict-units `Global Variables`
         // `primary` is global variables fields name
+        // `globalVars` 定义全局对象，可加入全局变量
         globalVars: {
           primary: '#fff'
         }
@@ -125,20 +127,35 @@ module.exports = {
   // 如果你的前端应用和后端API服务器没有运行在同一个主机上，
   // 你需要在开发环境下将API请求代理到API服务器。这个问题可以通过vue.config.js中的 devServer.proxy 选项来配置。
   devServer: {
-    open: true /*自动打开浏览器*/,
-    host: '0.0.0.0' /*设置为0.0.0.0则所有的地址均能访问 */,
-    port: 8066,
-    https: false,
-    hotOnly: false,
-    /* 使用代理 */
+    overlay: {
+      // 让浏览器overlay同时显示警告和错误
+      warnings: true,
+      errors: true
+    },
+    open: true, // 自动打开浏览器
+    host: '0.0.0.0', // 设置为0.0.0.0则所有的地址均能访问,
+    port: 8066, // 端口号
+    https: false, // https:{type:Boolean}
+    hotOnly: false, // 热更新
+    //使用代理
+    // proxy: 'http://localhost:8080'   // 配置跨域处理,只有一个代理
     proxy: {
-      '/chengzhou': {
-        target: 'http://localhost:4000' /* 目标代理服务器地址 */,
-        changeOrigin: true /* 允许跨域 */,
-        ws: true,
-        https: false,
-        chengzhou: {
-          '^/chengzhou': '/chengzhou'
+      '/api': {
+        target: 'http://172.11.11.11:7071',
+        changeOrigin: true,
+        // ws: true,//websocket支持
+        secure: false,
+        pathRewrite: {
+          '^/api': '/'
+        }
+      },
+      '/api2': {
+        target: 'http://172.12.12.12:2018',
+        changeOrigin: true,
+        //ws: true, websocket支持
+        secure: false,
+        pathRewrite: {
+          '^/api2': '/'
         }
       }
     }
