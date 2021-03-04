@@ -3,9 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './icons' // svg图标
-
 Vue.config.productionTip = false
-console.log(process.env)
 new Vue({
   router,
   store,

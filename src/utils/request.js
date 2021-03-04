@@ -3,8 +3,7 @@ import get from 'lodash/get'
 import storage from 'store'
 // 创建 axios 实例
 const request = axios.create({
-  // API 请求的默认前缀
-  baseURL: process.env.VUE_APP_BASE_URL,
+  baseURL: process.env.VUE_APP_SERVER_URL, // API请求的默认前缀
   timeout: 10000 // 请求超时时间
 })
 
@@ -12,7 +11,6 @@ const request = axios.create({
 const errorHandler = error => {
   const status = get(error, 'response.status')
   switch (status) {
-    /* eslint-disable no-param-reassign */
     case 400:
       error.message = '请求错误'
       break
@@ -90,6 +88,5 @@ request.interceptors.response.use(response => {
 
 export default request
 
-// 通过 VUE_APP_BASE_URL 区分线上与开发环境的 API 地址。
+// 通过 VUE_APP_SERVER_URL 区分线上与开发环境的 API 地址。
 // code 起到一个比较关键的作用，例如 token 过期时的验证。
-// 使用了一个叫 sotre 的包作为本地储存的工具用来存储 token

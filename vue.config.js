@@ -1,6 +1,8 @@
 // https://zhuanlan.zhihu.com/p/335684457
 const path = require('path')
+// const webpack = require('webpack')
 const IS_PROD = ['production'].includes(process.env.NODE_ENV)
+// const CompressionPlugin = require('compression-webpack-plugin') //引入compression-webpack-plugin Gzip
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -12,20 +14,20 @@ module.exports = {
     例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置publicPath为/my-app/
    */
   /* publicPath: process.env.NODE_ENV === 'production' ? './' : '/' */
-  publicPath: process.env.NODE_ENV === 'production' ? './' : './',
+  publicPath: process.env.NODE_ENV === 'production' ? '' : '',
   /* 输出文件目录:在npm run build时，生成文件的目录名称 */
   outputDir: process.env.outputDir,
   /* 放置生成的静态资源(js、css、img、fonts)的相对于outputDir的目录*/
   assetsDir: 'static',
   /* 指定生成的index.html的输出路径 (相对于outputDir)也可以是一个绝对路径 */
-  indexPath: '/',
+  indexPath: 'index.html',
   /* 在multi-page模式下构建应用。每个“page”应该有一个对应的JavaScript 入口文件 */
   pages: {
     index: {
       entry: 'src/main.js', // page 的入口 必须选项
       template: 'public/index.html', // 模板文件来源 可选
       filename: 'index.html', // 在dist/index.html的输出可选
-      title: 'vuedemo', // 当使用title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选项
+      title: 'vuedemo', // 当使用title选项时，template中的title标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> 可选项
       chunks: ['chunk-vendors', 'chunk-common', 'index'] //在这个页面中包含的块，默认情况下会包含, 提取出来的通用chunk和vendor,chunk  可选项
     }
     // 当使用只有入口的字符串格式时，
@@ -45,7 +47,7 @@ module.exports = {
     是否在保存的时候使用`eslint-loader`进行检查。
     是否在开发环境下通过eslint-loader在每次保存时lint代码(在生产构建时禁用eslint-loader)
   */
-  lintOnSave: process.env.NODE_ENV !== 'production', //
+  lintOnSave: process.env.NODE_ENV !== 'production',
   // 是否使用包含运行时编译器的Vue构建版本
   runtimeCompiler: false,
   // babel-loader默认会跳过node_modules依赖。通过这个选项可以显式转译一个依赖。
@@ -141,21 +143,21 @@ module.exports = {
     // proxy: 'http://localhost:8080'   // 配置跨域处理,只有一个代理
     proxy: {
       '/api': {
-        target: 'http://172.11.11.11:7071',
+        target: 'http://baidu.com',
         changeOrigin: true,
         // ws: true,//websocket支持
         secure: false,
         pathRewrite: {
-          '^/api': '/'
+          '^/api': ''
         }
       },
       '/api2': {
-        target: 'http://172.12.12.12:2018',
+        target: 'http://github.com',
         changeOrigin: true,
         //ws: true, websocket支持
         secure: false,
         pathRewrite: {
-          '^/api2': '/'
+          '^/api2': ''
         }
       }
     }
